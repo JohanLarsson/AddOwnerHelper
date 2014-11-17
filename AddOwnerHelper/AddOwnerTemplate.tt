@@ -1,0 +1,35 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+        /// <summary>
+        /// Identifies the <#= PropName #> property
+        /// </summary>
+        public static readonly DependencyProperty <#= PropName #>Property = <#= OldOwner #>.<#= PropName #>Property.AddOwner(
+            typeof(<#= NewOwner #>),
+            <#= MetaData #>);
+
+        /// <summary>
+        /// Write some help here right?
+        /// </summary>
+        public <#=PropType#> <#=PropName#>
+        {
+            get { return (<#= PropType #>)this.GetValue(<#= PropName #>Property); }
+            set { this.SetValue(<#= PropName #>Property, value); }
+        }
+<#+
+        public string OldOwner { get; set; }
+        public string NewOwner { get; set; }
+        public string PropName { get; set; }
+        public string PropType { get; set; }
+        public string MetaData { get; set; }
+
+		public string WriteCode(string oldOwner, string newOwner, string propName, string propType, string metaData)
+        {
+            OldOwner = oldOwner ?? "OldOwner";
+            NewOwner = newOwner ?? "NewOwner";
+            PropName = propName ?? "PropName";
+			PropType = propType ?? "PropType";
+		    MetaData = metaData ?? "MetaData";
+            GenerationEnvironment.Clear();
+            return TransformText();
+        }
+#>
