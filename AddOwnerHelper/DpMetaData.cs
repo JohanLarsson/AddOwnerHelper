@@ -11,8 +11,7 @@ namespace AddOwnerHelper
     public class DpMetaData
     {
         private readonly FieldInfo _dpField;
-
-        private DependencyProperty _dependencyProperty;
+        private readonly DependencyProperty _dependencyProperty;
 
         public DpMetaData(FieldInfo dpField)
         {

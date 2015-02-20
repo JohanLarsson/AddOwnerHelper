@@ -4,11 +4,13 @@
     using System.CodeDom.Compiler;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -37,7 +39,9 @@
                 {
                     foreach (var fieldInfo in fieldInfos)
                     {
-                        DependencyProperties.Add(new DpViewModel(fieldInfo));
+                        var dpViewModel = new DpViewModel(fieldInfo);
+                        dpViewModel.PropertyChanged += (_, __) => OnPropertyChanged("Code");
+                        DependencyProperties.Add(dpViewModel);
                     }
                 }
             }
@@ -52,24 +56,6 @@
             get
             {
                 return _dependencyProperties;
-            }
-        }
-
-        public DpViewModel SelectedFieldInfo
-        {
-            get
-            {
-                return _selectedFieldInfo;
-            }
-            set
-            {
-                if (Equals(value, _selectedFieldInfo))
-                {
-                    return;
-                }
-                _selectedFieldInfo = value;
-                OnPropertyChanged();
-                OnPropertyChanged("Code");
             }
         }
 
@@ -94,11 +80,11 @@
                         {
                             return false;
                         }
-                        if (dpViewModel.FieldInfo.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
+                        if (Regex.IsMatch(dpViewModel.FieldInfo.Name, _filter, RegexOptions.IgnoreCase))
                         {
                             return true;
                         }
-                        if (dpViewModel.FieldInfo.DeclaringType.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
+                        if (Regex.IsMatch(dpViewModel.FieldInfo.DeclaringType.Name, _filter, RegexOptions.IgnoreCase))
                         {
                             return true;
                         }
@@ -130,22 +116,29 @@
         {
             get
             {
-                if (SelectedFieldInfo == null)
+                var dpViewModels = DependencyProperties.Where(x => x.IsChecked || x.IsSelected)
+                                                                 .ToArray();
+                if (!dpViewModels.Any())
                 {
-                    return "SelectedFieldInfo == null";
+                    return "No property selected";
                 }
-                if (NewOwner == null)
-                {
-                    return "NewOwner == null";
-                }
+
                 var stringBuilder = new StringBuilder();
                 using (var stringWriter = new StringWriter(stringBuilder))
                 {
                     using (var writer = new IndentedTextWriter(stringWriter))
                     {
-                        writer.WriteAddOwnerField(SelectedFieldInfo.FieldInfo, NewOwner);
-                        writer.WriteLine();
-                        writer.WriteAddOwnerProperty(SelectedFieldInfo.FieldInfo, NewOwner);
+                        foreach (var dpViewModel in dpViewModels)
+                        {
+                            writer.WriteAddOwnerField(dpViewModel.FieldInfo, NewOwner);
+                            writer.WriteLine();
+                        }
+
+                        foreach (var dpViewModel in dpViewModels)
+                        {
+                            writer.WriteAddOwnerProperty(dpViewModel.FieldInfo, NewOwner);
+                            writer.WriteLine();
+                        }
                     }
                 }
                 return stringBuilder.ToString();

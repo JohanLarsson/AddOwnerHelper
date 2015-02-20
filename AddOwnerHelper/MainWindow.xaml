@@ -24,6 +24,7 @@
                     Orientation="Horizontal">
             <TextBlock Text="Filter:" />
             <TextBox MinWidth="120" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Content="Clear" Click="OnClearClick"></Button>
         </StackPanel>
 
         <StackPanel Grid.Row="0"
