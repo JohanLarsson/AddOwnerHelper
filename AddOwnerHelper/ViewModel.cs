@@ -39,9 +39,14 @@
                 {
                     foreach (var fieldInfo in fieldInfos)
                     {
-                        var dpViewModel = new DpViewModel(fieldInfo);
-                        dpViewModel.PropertyChanged += (_, __) => OnPropertyChanged("Code");
-                        DependencyProperties.Add(dpViewModel);
+                        var dependencyProperty =(DependencyProperty) fieldInfo.GetValue(null);
+                        if (dependencyProperty.OwnerType == fieldInfo.DeclaringType)
+                        {
+                            var dpViewModel = new DpViewModel(fieldInfo, dependencyProperty);
+                            dpViewModel.PropertyChanged += (_, __) => OnPropertyChanged("Code");
+                            DependencyProperties.Add(dpViewModel);
+                        }
+
                     }
                 }
             }

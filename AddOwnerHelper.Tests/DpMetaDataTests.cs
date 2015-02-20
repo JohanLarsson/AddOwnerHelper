@@ -1,4 +1,6 @@
-﻿namespace AddOwnerHelper.Tests
+﻿using System.Windows.Controls;
+
+namespace AddOwnerHelper.Tests
 {
     using System;
     using System.Linq;
@@ -13,6 +15,7 @@
     {
         [TestCase(typeof(Shape), "StretchProperty")]
         [TestCase(typeof(TextBoxBase), "IsReadOnlyProperty")]
+        [TestCase(typeof(TextBlock), "FontStyleProperty")]
         public void DumpMetadataType(Type type, string name)
         {
             var dependencyProperty = this.GetDp(type, name);

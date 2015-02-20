@@ -9,27 +9,6 @@
 
     public static class CodeWriter
     {
-        private const string Property = "Property";
-
-        //public static string Write(FieldInfo field, string newOwner)
-        //{
-        //    var stringBuilder = new StringBuilder();
-        //    var textWriter = new StringWriter(stringBuilder);
-        //    var writer = new IndentedTextWriter(textWriter, "    ");
-        //    writer.Indent = 2;
-        //    var template = new AddOwnerTemplate();
-        //    var dependencyProperty = (DependencyProperty)field.GetValue(null);
-        //    var propType = AliasName(dependencyProperty.PropertyType.Name);
-        //    var metaData = MetaData(dependencyProperty.DefaultMetadata, propType);
-
-        //    return template.WriteCode(
-        //            field.DeclaringType.Name,
-        //            newOwner,
-        //            field.Name.Replace("Property", ""),
-        //            propType,
-        //            metaData);
-        //}
-
         public static IndentedTextWriter WriteAddOwnerField(this IndentedTextWriter writer, FieldInfo dp, string newOwner)
         {
             writer.WriteFieldComment(dp, newOwner);
@@ -45,7 +24,7 @@
         {
             var dp = (DependencyProperty)dpField.GetValue(null);
             writer.WritePropertyComment(dpField, newOwner);
-            writer.WriteLine("public {0} {1}", dp.PropertyType.Name, dp.Name);
+            writer.WriteLine("public {0} {1}", AliasName(dp.PropertyType.Name), dp.Name);
             writer.WriteLine("{");
             writer.Indent++;
             writer.WriteLine(@"get {{ return ({0})GetValue({1}); }}", AliasName(dp.PropertyType.Name), dpField.Name);
@@ -132,58 +111,5 @@
             }
             return name;
         }
-
-        //public static string MetaData(PropertyMetadata propertyMetadata, string propType)
-        //{
-        //    var frameworkPropertyMetadata = propertyMetadata as FrameworkPropertyMetadata;
-        //    if (frameworkPropertyMetadata == null)
-        //    {
-        //        //new PropertyMetadata(default(object))
-        //        return string.Format("new PropertyMetadata(default({0}))", propType);
-        //    }
-        //    else
-        //    {
-        //        //new FrameworkPropertyMetadata(
-        //        //    null,
-        //        //    FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure)
-        //        //    {
-        //        //        DefaultUpdateSourceTrigger = UpdateSourceTrigger.Default
-        //        //    };
-        //        //new FrameworkPropertyMetadata
-        //        //    {
-        //        //        AffectsArrange = true,
-        //        //        AffectsMeasure = true,
-        //        //        AffectsParentArrange = true,
-        //        //        AffectsParentMeasure = true,
-        //        //        AffectsRender = true,
-        //        //        DefaultUpdateSourceTrigger = UpdateSourceTrigger.Default,
-        //        //        BindsTwoWayByDefault = true,
-        //        //        DefaultValue = default(object),
-        //        //        Inherits = true,
-        //        //        IsNotDataBindable = true,
-        //        //        OverridesInheritanceBehavior = true,
-        //        //        CoerceValueCallback = null,
-        //        //        IsAnimationProhibited = true,
-        //        //        Journal = true,
-        //        //        PropertyChangedCallback = null,
-        //        //        SubPropertiesDoNotAffectRender = true
-        //        //    };
-
-        //        var stringBuilder = new StringBuilder();
-        //        var writer = new IndentedTextWriter(new StringWriter(stringBuilder));
-        //        writer.WriteLine("new FrameworkPropertyMetadata(");
-        //        writer.Indent += 3;
-        //        writer.WriteCtorArgs(frameworkPropertyMetadata, propType);
-
-        //        //writer.WriteLine("{");
-        //        //writer.Indent++;
-
-
-
-        //        //writer.Indent--;
-        //        //writer.WriteLine("};");
-        //        return stringBuilder.ToString();
-        //    }
-        //}
     }
 }

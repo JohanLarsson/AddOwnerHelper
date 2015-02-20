@@ -12,10 +12,10 @@ namespace AddOwnerHelper
         private bool _isChecked;
         private bool _isSelected;
 
-        public DpViewModel(FieldInfo fieldInfo)
+        public DpViewModel(FieldInfo fieldInfo, DependencyProperty dependencyProperty)
         {
             FieldInfo = fieldInfo;
-            DependencyProperty = (DependencyProperty)FieldInfo.GetValue(null);
+            DependencyProperty = dependencyProperty;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
