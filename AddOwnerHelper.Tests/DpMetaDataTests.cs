@@ -2,12 +2,29 @@
 {
     using System;
     using System.Linq;
+    using System.Reflection;
     using System.Windows;
+    using System.Windows.Controls.Primitives;
+    using System.Windows.Shapes;
 
     using NUnit.Framework;
 
     public class DpMetaDataTests
     {
+        [TestCase(typeof(Shape), "StretchProperty")]
+        [TestCase(typeof(TextBoxBase), "IsReadOnlyProperty")]
+        public void DumpMetadataType(Type type, string name)
+        {
+            var dependencyProperty = this.GetDp(type, name);
+            Console.WriteLine("{0}.{1}: {2}", type.FullName, name, dependencyProperty.DefaultMetadata.GetType().Name);
+        }
+
+        private DependencyProperty GetDp(Type type, string name)
+        {
+            var fieldInfo = type.GetField(name, BindingFlags.Public | BindingFlags.Static);
+            var dp = (DependencyProperty)fieldInfo.GetValue(null);
+            return dp;
+        }
 
         [Test]
         public void DumpFrameworkPropertyMetadataOptions()
