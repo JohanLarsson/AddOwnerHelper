@@ -1,8 +1,57 @@
 ﻿<Application x:Class="AddOwnerHelper.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             StartupUri="MainWindow.xaml">
+             xmlns:addOwnerHelper="clr-namespace:AddOwnerHelper" StartupUri="MainWindow.xaml"
+             >
     <Application.Resources>
-         
+        <DataTemplate DataType="{x:Type addOwnerHelper:DpViewModel}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0"
+                           Text="Name"
+                           />
+                <TextBlock Grid.Row="0" Grid.Column="1"
+                           Text="{Binding FieldInfo.Name}"
+                           />
+
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="DefaultMetadata"
+                           />
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                           Text="{Binding DependencyProperty.DefaultMetadata}"
+                           />
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="DefaultValue"
+                           />
+                <TextBlock Grid.Row="2" Grid.Column="1"
+                           Text="{Binding DependencyProperty.DefaultMetadata.DefaultValue}"
+                           />
+
+                <TextBlock Grid.Row="3" Grid.Column="0"
+                           Text="PropertyChangedCallback"
+                           />
+                <TextBlock Grid.Row="3" Grid.Column="1"
+                           Text="{Binding DependencyProperty.DefaultMetadata.PropertyChangedCallback}"
+                           />
+
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                           Text="CoerceValueCallback"
+                           />
+                <TextBlock Grid.Row="4" Grid.Column="1"
+                           Text="{Binding DependencyProperty.DefaultMetadata.CoerceValueCallback}"
+                           />                
+            </Grid>
+        </DataTemplate>
     </Application.Resources>
 </Application>

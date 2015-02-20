@@ -10,45 +10,54 @@
         mc:Ignorable="d"
         >
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="Filter:" />
+                <TextBox MinWidth="120" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Click="OnClearClick" Content="Clear" />
+            </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.Column="0"
-                    Orientation="Horizontal"
-                    >
-            <TextBlock Text="Filter:" />
-            <TextBox MinWidth="120" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Click="OnClearClick" Content="Clear" />
-        </StackPanel>
+            <DataGrid x:Name="DataGrid" Grid.Row="1"
+                      Grid.Column="0" AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      ItemsSource="{Binding DependencyProperties}"
+                      >
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Header="Include" />
+                    <DataGridTextColumn Binding="{Binding FieldInfo.DeclaringType.Name}"
+                                        Header="Owner Type" IsReadOnly="True"
+                                        />
+                    <DataGridTextColumn Binding="{Binding FieldInfo.Name}"
+                                        Header="Owner Type" IsReadOnly="True"
+                                        />
+                </DataGrid.Columns>
+            </DataGrid>
+            <ContentPresenter Grid.Row="2" Content="{Binding SelectedItem, ElementName=DataGrid}" />
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Text="NewOwner:" />
+                <TextBox MinWidth="120" Text="{Binding NewOwner, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.Column="1"
-                    Orientation="Horizontal"
-                    >
-            <TextBlock Text="NewOwner:" />
-            <TextBox MinWidth="120" Text="{Binding NewOwner, UpdateSourceTrigger=PropertyChanged}" />
-        </StackPanel>
 
-        <DataGrid Grid.Row="1" Grid.Column="0"
-                  AutoGenerateColumns="False" CanUserAddRows="False"
-                  ItemsSource="{Binding DependencyProperties}"
-                  >
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Header="Include" />
-                <DataGridTextColumn Binding="{Binding FieldInfo.DeclaringType.Name}" Header="Owner Type" />
-                <DataGridTextColumn Binding="{Binding FieldInfo.Name}" Header="Owner Type" />
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <TextBox Grid.Row="1" Grid.Column="1"
-                 IsReadOnly="True"
-                 Text="{Binding Code,
-                                Mode=OneWay}"
-                 />
+            <TextBox Grid.Row="1" IsReadOnly="True"
+                     Text="{Binding Code,
+                                    Mode=OneWay}"
+                     />
+        </Grid>
     </Grid>
 </Window>
