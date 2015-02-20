@@ -42,7 +42,7 @@
                 }
             }
             NewOwner = "NewOwner";
-            this._collectionView = CollectionViewSource.GetDefaultView(this.DependencyProperties);
+            _collectionView = CollectionViewSource.GetDefaultView(DependencyProperties);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -51,7 +51,7 @@
         {
             get
             {
-                return this._dependencyProperties;
+                return _dependencyProperties;
             }
         }
 
@@ -59,17 +59,17 @@
         {
             get
             {
-                return this._selectedFieldInfo;
+                return _selectedFieldInfo;
             }
             set
             {
-                if (Equals(value, this._selectedFieldInfo))
+                if (Equals(value, _selectedFieldInfo))
                 {
                     return;
                 }
-                this._selectedFieldInfo = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged("Code");
+                _selectedFieldInfo = value;
+                OnPropertyChanged();
+                OnPropertyChanged("Code");
             }
         }
 
@@ -77,16 +77,16 @@
         {
             get
             {
-                return this._filter;
+                return _filter;
             }
             set
             {
-                if (value == this._filter)
+                if (value == _filter)
                 {
                     return;
                 }
-                this._filter = value;
-                this.OnPropertyChanged();
+                _filter = value;
+                OnPropertyChanged();
                 _collectionView.Filter = o =>
                     {
                         var fieldInfo = o as FieldInfo;
@@ -112,17 +112,17 @@
         {
             get
             {
-                return this._newOwner;
+                return _newOwner;
             }
             set
             {
-                if (value == this._newOwner)
+                if (value == _newOwner)
                 {
                     return;
                 }
-                this._newOwner = value;
-                this.OnPropertyChanged();
-                this.OnPropertyChanged("Code");
+                _newOwner = value;
+                OnPropertyChanged();
+                OnPropertyChanged("Code");
             }
         }
 
@@ -138,7 +138,17 @@
                 {
                     return "NewOwner == null";
                 }
-                return CodeWriter.Write(SelectedFieldInfo, NewOwner);
+                var stringBuilder = new StringBuilder();
+                using (var stringWriter = new StringWriter(stringBuilder))
+                {
+                    using (var writer = new IndentedTextWriter(stringWriter))
+                    {
+                        writer.WriteAddOwnerField(SelectedFieldInfo, NewOwner);
+                        writer.WriteLine();
+                        writer.WriteAddOwnerProperty(SelectedFieldInfo, NewOwner);
+                    }
+                }
+                return stringBuilder.ToString();
             }
         }
 

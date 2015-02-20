@@ -2,23 +2,12 @@
 {
     using System;
     using System.Linq;
-    using System.Reflection;
     using System.Windows;
-    using System.Windows.Controls.Primitives;
 
     using NUnit.Framework;
 
-    [TestFixture]
-    public class CodeWriterTests
+    public class DpMetaDataTests
     {
-        [Test]
-        public void Write()
-        {
-            // TextBox.IsReadOnlyProperty
-            var fieldInfo = typeof(TextBoxBase).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly).Single(x => x.Name == "IsReadOnlyProperty");
-            var code = CodeWriter.Write(fieldInfo, "NewType");
-            Console.Write(code);
-        }
 
         [Test]
         public void DumpFrameworkPropertyMetadataOptions()

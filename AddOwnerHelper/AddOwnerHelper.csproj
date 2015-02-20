@@ -40,6 +40,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -59,6 +60,8 @@
       <DependentUpon>AddOwnerTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="CodeWriter.cs" />
+    <Compile Include="Comment.cs" />
+    <Compile Include="DpMetaData.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
