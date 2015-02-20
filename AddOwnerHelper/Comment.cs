@@ -45,7 +45,7 @@ namespace AddOwnerHelper
                 return new Comment(null, null);
             }
             var value = dp.DeclaringType.FullName + "." + dp.Name;
-            var element = xDocument.Descendants().SingleOrDefault(x => x.HasAttributes && x.Attributes().Any(a => a.Name.LocalName == "name" && a.Value.EndsWith(value)));
+            var element = xDocument.Descendants(XName.Get("member")).FirstOrDefault(x => x.Attribute(XName.Get("name")).Value.EndsWith(value));
             return new Comment(element);
         }
 
