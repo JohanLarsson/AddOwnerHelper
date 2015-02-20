@@ -17,9 +17,9 @@
 
     public class ViewModel : INotifyPropertyChanged
     {
-        private readonly ObservableCollection<FieldInfo> _dependencyProperties = new ObservableCollection<FieldInfo>();
+        private readonly ObservableCollection<DpViewModel> _dependencyProperties = new ObservableCollection<DpViewModel>();
 
-        private FieldInfo _selectedFieldInfo;
+        private DpViewModel _selectedFieldInfo;
 
         private string _newOwner;
 
@@ -37,7 +37,7 @@
                 {
                     foreach (var fieldInfo in fieldInfos)
                     {
-                        DependencyProperties.Add(fieldInfo);
+                        DependencyProperties.Add(new DpViewModel(fieldInfo));
                     }
                 }
             }
@@ -47,7 +47,7 @@
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<FieldInfo> DependencyProperties
+        public ObservableCollection<DpViewModel> DependencyProperties
         {
             get
             {
@@ -55,7 +55,7 @@
             }
         }
 
-        public FieldInfo SelectedFieldInfo
+        public DpViewModel SelectedFieldInfo
         {
             get
             {
@@ -89,16 +89,16 @@
                 OnPropertyChanged();
                 _collectionView.Filter = o =>
                     {
-                        var fieldInfo = o as FieldInfo;
-                        if (fieldInfo == null)
+                        var dpViewModel = o as DpViewModel;
+                        if (dpViewModel == null)
                         {
                             return false;
                         }
-                        if (fieldInfo.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
+                        if (dpViewModel.FieldInfo.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
                         {
                             return true;
                         }
-                        if (fieldInfo.DeclaringType.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
+                        if (dpViewModel.FieldInfo.DeclaringType.Name.StartsWith(_filter, StringComparison.OrdinalIgnoreCase))
                         {
                             return true;
                         }
@@ -143,15 +143,14 @@
                 {
                     using (var writer = new IndentedTextWriter(stringWriter))
                     {
-                        writer.WriteAddOwnerField(SelectedFieldInfo, NewOwner);
+                        writer.WriteAddOwnerField(SelectedFieldInfo.FieldInfo, NewOwner);
                         writer.WriteLine();
-                        writer.WriteAddOwnerProperty(SelectedFieldInfo, NewOwner);
+                        writer.WriteAddOwnerProperty(SelectedFieldInfo.FieldInfo, NewOwner);
                     }
                 }
                 return stringBuilder.ToString();
             }
         }
-
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

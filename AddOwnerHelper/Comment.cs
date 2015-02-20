@@ -1,6 +1,7 @@
 namespace AddOwnerHelper
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -10,6 +11,7 @@ namespace AddOwnerHelper
     public class Comment
     {
         public static readonly string Path = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\";
+        private static readonly ConcurrentDictionary<string, XDocument> Cache = new ConcurrentDictionary<string, XDocument>();
 
         public Comment(IReadOnlyList<string> summaries, IReadOnlyList<string> returns)
         {
@@ -37,36 +39,27 @@ namespace AddOwnerHelper
 
         public static Comment CreateFieldComment(FieldInfo dp)
         {
-            var xmlDocFile = XmlDocFile(dp);
-            try
+            var xDocument = XmlDocFile(dp);
+            if (xDocument == null)
             {
-                var xml = File.ReadAllText(xmlDocFile);
-                var xDocument = XDocument.Parse(xml);
-                var value = dp.DeclaringType.FullName + "." + dp.Name;
-                var element = xDocument.Descendants().SingleOrDefault(x => x.HasAttributes && x.Attributes().Any(a => a.Name.LocalName == "name" && a.Value.EndsWith(value)));
-                return new Comment(element);
+                return new Comment(null, null);
             }
-            catch (Exception e)
-            {
-                return new Comment(new string[] { e.Message }, new string[0]);
-            }
+            var value = dp.DeclaringType.FullName + "." + dp.Name;
+            var element = xDocument.Descendants().SingleOrDefault(x => x.HasAttributes && x.Attributes().Any(a => a.Name.LocalName == "name" && a.Value.EndsWith(value)));
+            return new Comment(element);
         }
 
         public static Comment CreatePropertyComment(FieldInfo dp)
         {
-            var xmlDocFile = XmlDocFile(dp);
-            try
+            var xDocument = XmlDocFile(dp);
+            if (xDocument == null)
             {
-                var xml = File.ReadAllText(xmlDocFile);
-                var xDocument = XDocument.Parse(xml);
-                var value = dp.DeclaringType.FullName + "." + dp.Name.Replace("Property", "");
-                var element = xDocument.Descendants().SingleOrDefault(x => x.HasAttributes && x.Attributes().Any(a => a.Name.LocalName == "name" && a.Value.EndsWith(value)));
-                return new Comment(element);
+                return new Comment(null, null);
             }
-            catch (Exception e)
-            {
-                return new Comment(new string[] { e.Message }, new string[0]);
-            }
+            var value = dp.DeclaringType.FullName + "." + dp.Name.Replace("Property", "");
+            var element = xDocument.Descendants().SingleOrDefault(x => x.HasAttributes && x.Attributes().Any(a => a.Name.LocalName == "name" && a.Value.EndsWith(value)));
+            return new Comment(element);
+
         }
 
 
@@ -76,12 +69,28 @@ namespace AddOwnerHelper
             return inner;
         }
 
-        private static string XmlDocFile(FieldInfo dp)
+        private static XDocument XmlDocFile(FieldInfo dp)
         {
-            var assembly = dp.DeclaringType.Assembly;
-            var location = assembly.Location;
-            var nameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(location);
-            return System.IO.Path.Combine(Path, nameWithoutExtension + ".xml");
+            try
+            {
+                var assembly = dp.DeclaringType.Assembly;
+                var location = assembly.Location;
+                var nameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(location);
+                var xDocument = Cache.GetOrAdd(nameWithoutExtension, CreateXelement);
+                return xDocument;
+            }
+            catch (Exception e)
+            {
+                return new XDocument();
+            }
+        }
+
+        private static XDocument CreateXelement(string nameWithoutExtension)
+        {
+            var xmlDocFile = System.IO.Path.Combine(Path, nameWithoutExtension + ".xml");
+            var xml = File.ReadAllText(xmlDocFile);
+            var xDocument = XDocument.Parse(xml);
+            return xDocument;
         }
     }
 }

@@ -2,6 +2,7 @@ namespace AddOwnerHelper
 {
     using System;
     using System.CodeDom.Compiler;
+    using System.Globalization;
     using System.Linq;
     using System.Reflection;
     using System.Windows;
@@ -37,6 +38,10 @@ namespace AddOwnerHelper
                 if (type.IsEnum)
                 {
                     return type.Name + "." + Metadata.DefaultValue;
+                }
+                if (type == typeof(double))
+                {
+                    return ((double)Metadata.DefaultValue).ToString("F1", CultureInfo.InvariantCulture);
                 }
                 return Metadata.DefaultValue.ToString();
             }

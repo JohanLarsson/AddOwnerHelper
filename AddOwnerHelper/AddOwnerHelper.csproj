@@ -62,6 +62,7 @@
     <Compile Include="CodeWriter.cs" />
     <Compile Include="Comment.cs" />
     <Compile Include="DpMetaData.cs" />
+    <Compile Include="DpViewModel.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
